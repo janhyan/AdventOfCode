@@ -1,3 +1,5 @@
+# PART ONE #
+
 # Declare initial input for while loop to check
 puzzleArray = []
 puzzleKey = input("Enter puzzle keys: \n")              
@@ -28,4 +30,5 @@ for x in range(len(puzzleArray)):
     puzzleCode.append(int(firstInt + secondInt))
 
 print("{}{}".format("The answer is ", sum(puzzleCode)))
+
 

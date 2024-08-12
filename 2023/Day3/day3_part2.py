@@ -15,43 +15,64 @@ def getSum(input):
         # Check for any digits before and after the current line
         if x != 0:
             for matchSymbol in re.finditer('\d+', keys[x-1]):
-                prevDigits.update({matchSymbol.span(): int(matchSymbol.group())})
+                prevDigits.update({range(matchSymbol.start(), matchSymbol.end()): int(matchSymbol.group())})
 
         if x != len(keys)-1:
             for matchSymbol in re.finditer('\d+', keys[x+1]):
-                nextDigits.update({matchSymbol.span(): int(matchSymbol.group())})
+                nextDigits.update({range(matchSymbol.start(), matchSymbol.end()): int(matchSymbol.group())})
         
         for matchSymbol in re.finditer('\d+', keys[x]):
-            currentDigits.update({matchSymbol.span(): int(matchSymbol.group())})
+            currentDigits.update({range(matchSymbol.start(), matchSymbol.end()): int(matchSymbol.group())})
 
 
         # Check for asterisks in current line
         for match in re.finditer('[*]', value):    
+            asteriskPositions = list(range(match.start()-1, match.end()+1))
+            factor = 1
+            counter = 0
 
             # Check for any matches with symbols
-            print(prevDigits.keys())
-            if any(i in prevDigits.keys() for i in range(match.start()-1, match.end()+1)):
-                gamesTotal += prevDigits[i]
+            if iterateDigitPositions(asteriskPositions, list(prevDigits.keys())):
+                factor *= (prevDigits.get(iterateDigitPositions(asteriskPositions, list(prevDigits.keys()))))
+                counter += 1
 
-            if any(i in nextDigits.keys() for i in range(match.start()-1, match.end()+1)):
-                gamesTotal += int(match.group())
+            if iterateDigitPositions(asteriskPositions, list(nextDigits.keys())):
+                factor *= (nextDigits.get(iterateDigitPositions(asteriskPositions, list(nextDigits.keys()))))
+                counter += 1
 
-            if any(i in currentDigits.keys() for i in range(match.start()-1, match.end()+1)):
-                gamesTotal += int(match.group())   
+            if iterateDigitPositions(asteriskPositions, list(currentDigits.keys())):
+                leftRange = iterateDigitPositions(asteriskPositions, list(currentDigits.keys()))
+                factor *= (currentDigits.get(leftRange))
+                counter += 1
+                del currentDigits[leftRange]
 
-    print('The answer is', gamesTotal)        
-            
+                if iterateDigitPositions(asteriskPositions, list(currentDigits.keys())):
+                    factor *= (currentDigits.get(iterateDigitPositions(asteriskPositions, list(currentDigits.keys()))))
+                    counter += 1
+
+            if counter == 2:
+                gamesTotal += factor
+
+    print('The answer is', gamesTotal)     
+
+
+def iterateDigitPositions(symbolList, digitList):
+    for range in digitList:
+        for x in range:
+            if any(i in symbolList for i in range):
+                return range
+        
                
 # Test Case
-getSum("""467..114..
-...*......
-..35..633.
-......#...
-617*......
-.....+.58.
-..592.....
-......755.
-...$.*....
-.664.598..""")
+# getSum("""467..114..
+# ...*......
+# ..35..633.
+# ......#...
+# 617*2.2*3.
+# .....+....
+# ..592.....
+# ......755.
+# ...$.*....
+# .664.598..""")
 
-# getSum(aocd.get_data(day=3, year=2023))
+getSum(aocd.get_data(day=3, year=2023))

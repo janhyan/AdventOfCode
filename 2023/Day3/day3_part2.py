@@ -33,12 +33,24 @@ def getSum(input):
 
             # Check for any matches with symbols
             if iterateDigitPositions(asteriskPositions, list(prevDigits.keys())):
-                factor *= (prevDigits.get(iterateDigitPositions(asteriskPositions, list(prevDigits.keys()))))
+                firstRange = iterateDigitPositions(asteriskPositions, list(prevDigits.keys()))
+                factor *= (prevDigits.get(firstRange))
                 counter += 1
+                del prevDigits[firstRange]
+
+                if iterateDigitPositions(asteriskPositions, list(prevDigits.keys())):
+                    factor *= (prevDigits.get(iterateDigitPositions(asteriskPositions, list(prevDigits.keys()))))
+                    counter += 1
 
             if iterateDigitPositions(asteriskPositions, list(nextDigits.keys())):
-                factor *= (nextDigits.get(iterateDigitPositions(asteriskPositions, list(nextDigits.keys()))))
+                firstRange = iterateDigitPositions(asteriskPositions, list(nextDigits.keys()))
+                factor *= (nextDigits.get(firstRange))
                 counter += 1
+                del nextDigits[firstRange]
+
+                if iterateDigitPositions(asteriskPositions, list(nextDigits.keys())):
+                    factor *= (nextDigits.get(iterateDigitPositions(asteriskPositions, list(nextDigits.keys()))))
+                    counter += 1
 
             if iterateDigitPositions(asteriskPositions, list(currentDigits.keys())):
                 leftRange = iterateDigitPositions(asteriskPositions, list(currentDigits.keys()))
@@ -64,15 +76,14 @@ def iterateDigitPositions(symbolList, digitList):
         
                
 # Test Case
-# getSum("""467..114..
-# ...*......
-# ..35..633.
-# ......#...
-# 617*2.2*3.
-# .....+....
-# ..592.....
-# ......755.
-# ...$.*....
-# .664.598..""")
+# getSum("""100.100..
+# ...*.....
+# ..100-100
+# ......-..
+# 100......
+# .....*100
+# ..100....
+# ......100
+# .....*100""")
 
 getSum(aocd.get_data(day=3, year=2023))
